@@ -2,7 +2,8 @@ Muhammad Fadhlan Arradhi - 2306240061
 
 url website : https://muhammad-fadhlan32-wemart.pbp.cs.ui.ac.id/
 
-1. pertama-tama dalam membuat sebuah project Django baru, kita perlu membuat direktori baru dimana kita akan menyimpan hal-hal yang diperlukan dalam project kita. Selanjutnya kita perlu masuk kedalam virtual environment python, hal ini dilakukan dengan mengetik python -m venv env dilanjutkan dengan 
+1. 
+pertama-tama dalam membuat sebuah project Django baru, kita perlu membuat direktori baru dimana kita akan menyimpan hal-hal yang diperlukan dalam project kita. Selanjutnya kita perlu masuk kedalam virtual environment python, hal ini dilakukan dengan mengetik python -m venv env dilanjutkan dengan 
 env\Scripts\activate, hal ini dilakukan agar requirements dan dependencies yang akan kita pakai dalam proyek terisolasi dan tidak bertabrakan dengan versi diluar virtual environments. 
 
 Selanjutnya kita harus mendownload requirements dan dependencies yang kita perlukan dalam membangun project kita. untuk mempermudah langkah ini, kita bisa menuliskan nama-nama modul yang akan kita pakai pada txt file dan menjalankan pip install -r requirements.txt untuk mendownload semuanya sekaligus.
@@ -37,10 +38,13 @@ setelah project terupload di GitHub, saya dapat mengupload project saya mengguna
 
 client melakukan request melalui urls.py yang ada di dalam proyek, setelah itu urls.py proyek meneruskan request tersebut ke urls.py yang ada pada main. Selanjutnya urls.py menerima request lalu memanggil view.py, pada view.py main.html dan models.py dipanggil untuk di render sesuai dengan request yang diberikan client berdasarkan code yang telah di definisikan. setelah request.py siap untuk ditampilkan, view.py mengirim http response ke client. 
 
-3. git merupakan tools yang berfungsi sebagai version control system. dengan git, kita dapat melacak perubahan apa saja yang kita lakukan pada proyek kita. kita juga dapat mengembalikan proyek ke versi sebelumnya apabila erdapat asalah pada versi terbarunya. Selain itu, git juga memungkinkan kita untuk berkolaborasi dalam mengerjakan proyek. kita dapat melakukan perubahan pada device lokal masing-masing sebelum melakukan integrasi dengan menggabungkan perubahan yang telah dilakukan melalui git
+3. 
+git merupakan tools yang berfungsi sebagai version control system. dengan git, kita dapat melacak perubahan apa saja yang kita lakukan pada proyek kita. kita juga dapat mengembalikan proyek ke versi sebelumnya apabila erdapat asalah pada versi terbarunya. Selain itu, git juga memungkinkan kita untuk berkolaborasi dalam mengerjakan proyek. kita dapat melakukan perubahan pada device lokal masing-masing sebelum melakukan integrasi dengan menggabungkan perubahan yang telah dilakukan melalui git
 
-4. Django merupakan salah satu framework yang terkenal dan sudah ramai dipakai dalam proyek pengembangan perangkat lunak. Selain itu, Django menggunakan Bahasa pemrograman python dimana python merupakan Bahasa pemrograman yang terkenal dan sangat ramah untuk pemula sehingga pemilihan Django sebagai framework pertama yang dipelajari bagi pemula adalah pilihan yang direkomendasikan. 
+4. 
+Django merupakan salah satu framework yang terkenal dan sudah ramai dipakai dalam proyek pengembangan perangkat lunak. Selain itu, Django menggunakan Bahasa pemrograman python dimana python merupakan Bahasa pemrograman yang terkenal dan sangat ramah untuk pemula sehingga pemilihan Django sebagai framework pertama yang dipelajari bagi pemula adalah pilihan yang direkomendasikan. 
 
-5. Object-Relational-Mapping merupakan metode yang digunakan Django untuk menghubungkan dan mengelola interaksi antar object pada python dan database yang dimiliki. dengan memetakan data yang ada di database ke object python, kita dapat membawa konsep object dan class dalam berurusan dengan database tanpa perlu berurusan dengan query seperti query sql secara langsung 
+5. 
+Object-Relational-Mapping merupakan metode yang digunakan Django untuk menghubungkan dan mengelola interaksi antar object pada python dan database yang dimiliki. dengan memetakan data yang ada di database ke object python, kita dapat membawa konsep object dan class dalam berurusan dengan database tanpa perlu berurusan dengan query seperti query sql secara langsung 
 
 
