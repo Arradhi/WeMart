@@ -1,3 +1,5 @@
+{% extends 'base.html' %}
+{% block content %}
 <h1>Welcome to WeMart by Muhammad Fadhlan Arradhi - 2306240061!</h1>
 
 <h5>Nama Produk : </h5>
@@ -7,3 +9,37 @@
 <h5>Deskripsi : </h5>
 <p>{{ description }}<p>
 <img src="{{ image }}">
+
+{% if not product_entries %}
+<p>Belum ada produk baru ditambahkan.</p>
+{% else %}
+<table>
+  <tr>
+    <th>Nama Produk</th>
+    <th>Deskripsi</th>
+    <th>Harga</th>
+    <th>Gambar</th>
+  </tr>
+
+  {% comment %} Berikut cara memperlihatkan data produk di bawah baris ini 
+  {% endcomment %} 
+  {% for product_entry in product_entries %}
+  <tr>
+    <td>{{product_entry.name}}</td>
+    <td>{{product_entry.description}}</td>
+    <td>{{product_entry.price}}</td>
+    <td><img src="{{ product_entry.image.url }}" alt="Gambar Produk" width="100"></td>
+
+{{product_entry.image}}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endif %}
+
+<br />
+
+<a href="{% url 'main:create_product_entry' %}">
+  <button>Tambahkan Produk</button>
+</a>
+
+{% endblock content %}
