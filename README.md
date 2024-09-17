@@ -45,6 +45,61 @@ git merupakan tools yang berfungsi sebagai version control system. dengan git, k
 Django merupakan salah satu framework yang terkenal dan sudah ramai dipakai dalam proyek pengembangan perangkat lunak. Selain itu, Django menggunakan Bahasa pemrograman python dimana python merupakan Bahasa pemrograman yang terkenal dan sangat ramah untuk pemula sehingga pemilihan Django sebagai framework pertama yang dipelajari bagi pemula adalah pilihan yang direkomendasikan. 
 
 5. 
-Object-Relational-Mapping merupakan metode yang digunakan Django untuk menghubungkan dan mengelola interaksi antar object pada python dan database yang dimiliki. dengan memetakan data yang ada di database ke object python, kita dapat membawa konsep object dan class dalam berurusan dengan database tanpa perlu berurusan dengan query seperti query sql secara langsung 
+Object-Relational-Mapping merupakan metode yang digunakan Django untuk menghubungkan dan mengelola interaksi antar object pada python dan database yang dimiliki. dengan memetakan data yang ada di database ke object python, kita dapat membawa konsep object dan class dalam berurusan dengan database tanpa perlu berurusan dengan query seperti query sql secara langsung
+
+========================================================================
+
+Tugas 3 PBP
+
+1. 
+Data delivery sangat diperlukan dalam platform sebagai media komunikasi antara client dengan server maupun komunikasi internal yang terjadi di dalam proyek kita. Jika proyek kita tidak memiliki data delivery, akan ada potensi dimana request client tidak bisa terpenuhi Sebagian atau seutuhnya. hali ini juga berlaku sebaliknya dimana jika client tidak bisa mengirim data, maka proyek berpotensi tidak bisa memproses kebutuhan client dikarenakan kurangnya informasi.
+
+2. 
+antara XML dan JSON, keduanya memiliki kelebihan dan kekurangan masing-masing sehingga kita dapat menggunakan keduanya sesuai dengan kebutuhan kita.
+XML lebih cocok digunakan ketimbang JSON disaat kita berurusan dengan file-file yang kompleks dan banyak memiliki nested elements. hal ini memiliki variabel yang bisa dideklarasikan secara bebas dan independen serta struktur XML yang mendukung hirarki. Contoh aplikasi nyatanya seperti file yang berisikan kumpulan putusan hukum atau pasal negara.
+Sementara JSON lebih cocok digunakan saat kita berurusan dengan web atau aplikasi sehari-hari khususnya untuk mobile platform yang memiliki keterbatasan resource. JSON terkenal ringan dan strukturnya tersusun atas key dan value sehingga mudah diolah oleh komputer. ketimbang XML. JSON merupakan pilihan tepat yang dapat digunakan untuk menyimpan data user pada website kecil dengan keterbatasan hardware yang dimiliki sehingga hal inilah yang membuat JSON lebih populer 
+
+3. 
+method is_valid() yang kita definisikan pada method creat_product_entry di views.py berfungsi untuk melakukan validasi terhadap input yang akan diberikan pada form sesuai dengan aturan yang telah kita definisikan. Tanpa validasi ini, form bisa menerima data yang tidak valid atau berbahaya, yang dapat menyebabkan error atau kerentanan keamanan di aplikasi.
+
+4. 
+CSRF_token merupakan sebuah token unik yang ditambahkan sebagai bagian dalam request kepada suatu website. Token ini mencegah serangan CSRF (Cross-Site Request Forgery) dimana penyerang bisa mengeksploitasi sesi pengguna yang sedang aktif dan mengirimkan request yang tidak terotorisasi oleh pengguna aslinya pada website. Jika kita tidak menggunakan csrf_token, system tidak bisa membedakan mana request yang datang dari pengguna asli atau penyerang sehingga kedua request tersebut akan diakui oleh system. Sementara dengan adanya CSRF_token, dalam membuat request penyerang perlu menyertakan token yang sama dalam membuat request palsunya dimana hal ini hamper tidak mungkin untuk ditebak.
+
+5.
+Pertama-tama kita perlu membuat skeleton sebagai kerangka views dengan nama base.html. Dengan adanya skeleton kita dapat menjaga konsistensi pada desain web kita. selanjutnya kita perlu menambahkan BASE_DIR / 'templates' pada list DIRS agar base.html yang kita buat dapat dikenali.
+
+berikutnya kita perlu menambahkan {% extends 'base.html' %} pada main.html kita agar template html mengikuti kerangka yang sudah dibuat pada base.html
+selanjutnya kita akan mengubah primary key dari integer menjadi UUID pada models Product yang telah kita buat untuk mencegah celah keamanan serangan IDOR.
+
+Setelah migrasi models, kita dapat mulai membuat form untuk data delivery. pertama buat form.py pada direktori main. selanjutnya import modul yang diperlukan dan buat objek formnya. saat form dikirim, data akan disimpan sebagai object yang kita deklarasikan pada form tersebut (dalam kasus ini merupakan object Products yang ada pada models).
+
+Selanjutnya kita akan mengimport object form tadi ke views.py. lalu kita akan membuat fungsi untuk menambahkan data product entry secara otomatis dan akan mengembalikan tampilan ke main.html Ketika data di submit. fungsi ini juga menghandle render terhadap tampilan html disaat user akan mengisi form. 
+
+Setelah itu, kita akan menambahkan object Product.objects.all() yang akan di assign ke variable product_entries di fungsi show_main pada main. setelah itu ita akan menambahkan product_entries tersebu kedalam context pada fungsi show_main. hal ini bertujuan agar semua object products pada database dapat diambil.
+
+Selanjutnya kita akan mengimport fungsi tersebut ke urls.py yang ada di main dan menambahkannya ke path agar request form yang dating dapat diarahkan ke create_product_entries. Setleah itu kita akan membuat html pada main/templates yang Bernama create_product_entry.html. file ini berfungi untuk handle tampilan html disaat user akan mengisi form. html ini terhubung dengan forms.py sehingga kolom-kolomnya dapat diterapkan secara otomatis. Selanjutnya kita tambahkan line code yang akan memberikan tampilan berupa tbel mengenai objek-objek (dalam hal ini Products) yang ditambahkan melalui form data delivery pada tampilan main.html. 
+
+Berikutnya kita akan membuat fungsi untuk mengembalikan data-data yang ada di dalam object Products yang ditambahkan melalui form dalam bentuk JSON dan XML. Pertama import modul yang diperlukan seperti HttpRespone dan serializers. Serializers berfungsi untuk menerjemahkan objek model menjadi format lain seperti XML atau JSON. Lalu kita cukup membuat sebuah fungsi yang menerima parameter request dan menampilkan semua object yang ada pada class Products. setelah itu kita return HttpResponse berisikan data yang di serialize menjadi XML atau JSON. hal yang sama juga berlaku pada fungsi yang kita custom untuk lebih spesifik seperti show by id. dalam fungsi ini kita memfilter data objek secara spesifik sesuai dengan atribut yang kita inginkan. 
+
+lalu tak lupa kita import fungsi-fungsi tersebut kedalam urls.py dan juga menambahkan path yang mengarah ke masing-masing fungsi. dengan begitu kita dapat mengakses XML atau JSON berisikan data-data objek Products melalui peramban web.
+
+6. 
+show JSON
+![Logo](https://i.imgur.com/tfEvKQx.png)
+
+show XML
+![Logo](https://i.imgur.com/CGoWXjF.png)
+
+show JSON by ID
+![Logo](https://i.imgur.com/vcdm4Hh.png)
+
+show XML by ID
+![Logo](https://i.imgur.com/MseC1mN.png)
+
+
+
+
+
+
 
 

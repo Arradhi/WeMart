@@ -4,6 +4,7 @@ from main.models import Products
 from django.http import HttpResponse
 from django.core import serializers
 from xml.etree.ElementTree import Element, SubElement, tostring
+import json
 
 
 
@@ -31,13 +32,18 @@ def create_product_entry(request):
     context = {'form': form}
     return render(request, "create_product_entry.html", context)
 
+def show_json(request):
+    data = Products.objects.all()
+    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
 
 def show_xml(request):
     data = Products.objects.all()
-    root = Element('items')
-    item_element = SubElement(root, 'item')
-    image_url = SubElement(item_element, 'image_url')
-    image_url.text = request.build_absolute_uri(data.image.url)
     return HttpResponse(serializers.serialize("xml", data), content_type="application/xml")
-# Create your views here.
 
+def show_xml_by_id(request, id):
+    data = Products.objects.filter(pk=id)
+    return HttpResponse(serializers.serialize("xml", data), content_type="application/xml")
+
+def show_json_by_id(request, id):
+    data = Products.objects.filter(pk=id)
+    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
