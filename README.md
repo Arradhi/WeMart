@@ -96,6 +96,45 @@ show JSON by ID
 show XML by ID
 ![Logo](https://i.imgur.com/MseC1mN.png)
 
+========================================================================
+
+Tugas 4 PBP
+
+1. 
+Perbedaan Utama antara HTTPResponseRedirect() dan redirect() terletak pada parameter fungsiya.  HTTPResponseRedirect() menerima parameter berupa URL ecara eksplisit yang nantinya akan memberi respon pengalihan. Sementara redirect() menerima parameter berupa instance name atau function name yang nantinya akan secara otomatis memberikan respon pengalihan ke instance atau fungsi yang diberikan.
+
+2. 
+Kita perlu melakukan import models User yang telah diimplementasikan Django pada Models proyek kita. setelah itu kita definisikan user dalam model kita menggunakanan foreign keydengan syntax :  user = models.ForeignKey(User, on_delete=models.CASCADE) dengan foreign key, kita dapat menghubungkan produk-produk yang dibuat terhadap user unik yang sedang terlogin sehingga tiap user dapat memiliki data produk yang berbeda-beda
+
+3. 
+Authenication merupakan proses untuk melakukan verifikasi identitas pengguna. proses ini biasanya meminta pengguna utuk memasukan identitas seperti nama dan password lalu dicek kesesuaiannya pada database. kita dapat mengimplementasikan hal ini pada Django dengan
+django.contrib.auth. kita dapat membuat sebuah fungsi login dan meletakan @login_required sebagai batasan login sebelum mengakses website.
+
+Disisi lain, Authorization merupakan proses untuk memberikan atau membatasi akses pengguna pada sistem sesuai dengan identitas atau role yang mereka miliki. kita dapat menerapkan hal iinidengan Permission yang disediakan oleh django.contrib.auth.models. kita juga dapat menggunakan @permission_required pada fungsi yang dibatasai berdasarkan role yang sudah didefinisikan
+
+4.
+Django mengingat user yang sedang login dengan menggunakan holding state. hal ini biasanya diterapkan menggunakan session dan cookie. cookie merupakan storage kecil berukuran 4kb yang ada pada client. kita bisa saja menyimpan informasi langsung pada cookie tapi hal tersebut berpotensi menyebabkan hal-hal yang tidak diinginkan dari segi keamanan. Maka dari tu, Kita dapat menggunakan session dimana session ini memiliki session ID yang unik sehingga session ID inilah yang disimpan pada cookie. nantinya session ID ini akan dipetakan pada suatu struktur data di proyek kita untuk mendeteksi informasi klien yang    sedang login. Selain untuk melakukan holding state, Cookies biasanya digunakan untuk menyimpan preferensi pengguna serta melacak behaviour dan activity dari pengguna. Data yang ada pada Cookies bisa saja diretas melalui koneksi mencurigakan sehingga Cookies tidak sepenuhnya aman. maka dari itu lebih baik kita tidak menyimpan identitas user yang login dalam cookies secara eksplisit.
+
+5. 
+Pertama kita akan membuat form registrasi pada views.py menggunakan UserCreationForm agar pengguna dapat membuat akun. Selanjutnya kita membuat fungsi register yang menerima request dan form ini akan membuat object UserCrationForm yang nanti akan membuat user berdasarkan input data-datanya. prinsip kerja dari fungsi ini mirip dengan fungsi create_product_entry yang sama-sama menggunakan form. Selanjutnya kita buat tampilan HTML untuk halaman register pada main template. Tak lupa juga kita mengatur url pada urls.py dengan mengimport fungsi register dan menambahkannya pada urlpatterns.
+
+Berikutnya kita akan membuat fungsi untuk login pada views.py kita perlu import authenticate, login, dan AuthenticationForm untuk membuat fungsi login. fungsi login_user menerima paramere request dan dia akan membuat object AuthenticationForm yang menerima data-data yang akan divalidasi. jika data-datanya sesuai engan yang ada di database, maka user akan masuk ke halaman main. selanjutnya kita definisikan tampilan HTML untuk login page pada main template dan menambahkan fungsi login_user pada urls.py
+
+
+Setelah itu, kita akan membuat fungsi logout pada views,py dengan melakukan import logout. fungsi logout_user akan menerima request dan request tersebut akan diproses sehingga user terlogout dan di redirect ke login page. Tak lupa kita tambahkan fungsi ini pada urls.py pada aplikasi main
+
+Selanjutnya, setelah kita selesai membuat fungsi-fungsi di views.py kita akan merestriksi akses show_main apabila user belum terlogin dengan mengimport login_required dan menambahkan decorator @login_required(login_url='/login') pada fungsi show_main. Lalu kita akan menggunakan Cookies untuk menerapkan holding state. kita akan mengimport datetime, HttpResponeRedirect dan reverse diamna kita akan menerapkan hal ini pada fungsi login_user jika form valid maka kita akan melakukan request dengan nama "last_login"untuk set cookie berisikan datetime. lalu kita akan menambahkan  request.COOKIES['last_login'] pada show_main dengan key :last_login" agar informasi ini dapat dilihat di halaman web. setelah itu kita juga akan mengkonfigurasi fungsi logout dengan mendelete cookies apabila user logout. kita juga akan memperlihatkan cookies last login melalui main.html yang akan mengambil context pada views.py
+
+Berikutnya kita akan membuat tiap user memiliki data product_entry yang masing-masing unik. Kita perlu melakukan import models User yang telah diimplementasikan Django pada Models proyek kita. setelah itu kita definisikan user dalam model kita menggunakanan foreign keydengan syntax :  user = models.ForeignKey(User, on_delete=models.CASCADE) dengan foreign key, kita dapat menghubungkan produk-produk yang dibuat terhadap user unik yang sedang terlogin sehingga tiap user dapat memiliki data produk yang berbeda-beda. lalu kita akan mengubah create_product_entry pada views.py dengan mengubah mood_entry = form.save(commit=False) dan menambahkan request.user agar Django tidak langsung menyimpan data pada form ke atabase sehingga kita bisa mengarahkan form tersebut ke user yang sedang login melalui request.user. kita juga akan mengubah product_entries pada show_main dari yang tadinya all menjadi  product_entries = Products.objects.filter(user=request.user) sesuai engan user yang sedang login sehingga data yang ditampilkan merupakan data dari user yang sedang login saja. Setelah itu saya akan menambahkan "user_name" pada context dengan value request.user.username sehingga saya dapat menampilkan nama user yangs edang login pada main.html 
+
+Terakhir kita akan membuat satu akun yang akan menjadi default value pada saat kita melakukan migrasi. setelah akun dibuat, kita akan melakukan migrasi dengan  python manage.py makemigrations dan akan ada opsi dimana kita akan mengetik 1 sebanyak dua kali untuk migrasi. setelah selesai kita jalankan python manage.py migrate untuk migrasi modelnya. lalu untuk best practice, kita akan mengubah DEBUG pada settings.py dengan meningmpor OS lalu mengubahnya menjadi PRODUCTION = os.getenv("PRODUCTION", False) | DEBUG = not PRODUCTION sehingga pada saat website error, client tidak dapat melihat debug code dari websitenya. Dengan begitu website kita sekarang dapat membuat beragam user dengan beragam jenis produk berbeda. pada tugas ini saya akan membuat 2 user dengan 3 produk berbeda. dengan melakukan register sebanyak 2 kali, lalu login pada masing-masing akun dan menambahkan 3 produk berbeda pada masing-masing akun.
+
+
+
+
+
+
+
 
 
 

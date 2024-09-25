@@ -2,6 +2,7 @@
 {% block content %}
 <h1>Welcome to WeMart by Muhammad Fadhlan Arradhi - 2306240061!</h1>
 
+<h3>Saat ini anda ter-login dengan akun: {{user_name}}</h3>
 <h5>Nama Produk : </h5>
 <p>{{ name }}<p>
 <h5>Harga : </h5>
@@ -9,6 +10,7 @@
 <h5>Deskripsi : </h5>
 <p>{{ description }}<p>
 <img src="{{ image }}">
+<h5>Sesi terakhir login: {{ last_login }}</h5>
 
 {% if not product_entries %}
 <p>Belum ada produk baru ditambahkan.</p>
@@ -38,6 +40,9 @@
 
 <a href="{% url 'main:create_product_entry' %}">
   <button>Tambahkan Produk</button>
+</a>
+<a href="{% url 'main:logout' %}">
+  <button>Logout</button>
 </a>
 
 {% endblock content %}
