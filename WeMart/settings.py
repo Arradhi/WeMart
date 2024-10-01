@@ -133,5 +133,5 @@ else:
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-MEDIA_URL = '/gambar_produk/'  # URL untuk mengakses file media
-MEDIA_ROOT = os.path.join(BASE_DIR, 'gambar_produk') 
+MEDIA_URL = '/media/'  # URL untuk mengakses file media
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media') 
