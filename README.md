@@ -129,12 +129,103 @@ Berikutnya kita akan membuat tiap user memiliki data product_entry yang masing-m
 
 Terakhir kita akan membuat satu akun yang akan menjadi default value pada saat kita melakukan migrasi. setelah akun dibuat, kita akan melakukan migrasi dengan  python manage.py makemigrations dan akan ada opsi dimana kita akan mengetik 1 sebanyak dua kali untuk migrasi. setelah selesai kita jalankan python manage.py migrate untuk migrasi modelnya. lalu untuk best practice, kita akan mengubah DEBUG pada settings.py dengan meningmpor OS lalu mengubahnya menjadi PRODUCTION = os.getenv("PRODUCTION", False) | DEBUG = not PRODUCTION sehingga pada saat website error, client tidak dapat melihat debug code dari websitenya. Dengan begitu website kita sekarang dapat membuat beragam user dengan beragam jenis produk berbeda. pada tugas ini saya akan membuat 2 user dengan 3 produk berbeda. dengan melakukan register sebanyak 2 kali, lalu login pada masing-masing akun dan menambahkan 3 produk berbeda pada masing-masing akun.
 
+========================================================================
+
+Tugas 5 PBP
 
 
+1.
+Priorita CSS Selectoradalah sebagai berikut:
+- Inline Style
+- ID Selector
+- Class Selectors
+- Element Selector
+
+Jika ada dua selector dengan tingkat prioritas yang sama, yang terakhir dalam urutan di file CSS akan diterapkan.
+
+2. 
+Responsive design penting untuk diterapkan karena tiap penggua nantina akan mengakses web melalui perangkat dengan ukuran layar yang berbeda-beda. Dengan menerapkan konsep responsive design, pengalaman yang didapat tetap optimal pada masing-masing device pengguna tanpa perlu membuat versi yang berbeda-beda
+
+cotoh web dengan responsive design:
+- Youtube.com
+
+contoh web tanpa responsive design:
+http://www.arngren.net/
 
 
+3.
+Margin : Ruang di luar border dari elemen. Margin mengatur jarak antara elemen yang satu dengan elemen lainnya.
+
+Border : Garis yang mengelilingi padding dan konten elemen. Border menambah visual seperti garis di sekitar elemen, dan bisa diatur dengan berbagai gaya, warna, dan ketebalan.
+
+Padding : Ruang di dalam border, antara konten elemen dan border itu sendiri. Padding mengatur jarak antara isi konten dan batas elemen.
+
+contoh implementasi : 
+div {
+  margin: 20px;       
+  border: 2px solid black;
+  padding: 10px;    
+}
+
+ilustrasi :
+
+![Logo](https://i.imgur.com/XvbUdSr.png)
+
+4.
+Flexbox
+Flexbox adalah sistem layout CSS yang dirancang untuk membuat tata letak yang fleksibel dan responsif. Flexbox bekerja dengan elemen satu dimensi, yang berarti bahwa elemen-elemen tersebut bisa diatur dalam satu arah, baik secara horizontal (row) atau secara vertikal (column). Flexbox sangat berguna untuk mengatur elemen dalam sebuah kontainer dan memungkinkan elemen-elemen tersebut menyesuaikan diri sesuai ukuran kontainer yang berubah-ubah.
+
+Kegunaan Flexbox:
+- Alignment: Mengatur alignment elemen dengan mudah menggunakan properti seperti justify-    content (untuk alignment horizontal) dan align-items (untuk alignment vertikal).
+
+- Flexible Widths: Elemen bisa otomatis menyesuaikan lebarnya sesuai ruang yang tersedia di kontainer.
+
+- Order: Mengubah urutan tampilan elemen tanpa mengubah urutan di HTML menggunakan properti order.
 
 
+Gridbox
+CSS Grid adalah sistem layout dua dimensi yang memungkinkan kita untuk mengatur elemen dalam bentuk baris dan kolom. Ini lebih fleksibel dan kuat untuk membuat layout kompleks dibandingkan Flexbox karena bekerja di dua dimensi.
+
+
+Kegunaan Grid Layout:
+- Membuat Layout yang Kompleks: Grid memungkinkan pengaturan kolom dan baris secara bersamaan, sehingga cocok untuk layout seperti galeri foto atau dashboard.
+
+- Mengontrol Ukuran Kolom dan Baris: Dengan grid-template-columns dan grid-template-rows, kita bisa menentukan lebar kolom dan tinggi baris secara spesifik.
+
+- Menyusun Elemen dengan Tepat: Kita bisa menempatkan elemen di dalam grid menggunakan properti seperti grid-column dan grid-row.
+
+5.
+Pertama kita akan membuat fungsi untuk menghapus dan mengedit produk. Kedua fugsi ini akan mengambil object produk yang sudah jadi berdasarkan id yang ada pada request nanti fungsi edit akan membuat form produk baru dan form tersebut akan menggantikan produknya sementara fungsi delete akan menghapusproduk tersebut.
+
+Selanjutnya kita akan mempercantik tampilan website menggunakan Tailwind CSS. Pertama tambahkan <script src="https://cdn.tailwindcss.com">. kita akan mendekorasi html menggunakan metode external style sheet berikutnya kita konfigurasi static file pada settigs.py lalu kita akan membuat global.css yang akan diletakan pada direktori static/css. global.css berfungsi sebagai template Utama css. kita akan mendekorasi register page dan login page. Aksen website ini didominasi oleh warna oranye. kita akan membuat field dimana user bisa memasukan username dan password menggunakan <input> serta kita akan membuat tombol untuk register dan login menggunakan <button> yang diwarnai oranye dan akan berubah warna saat di hover. pada halaman register dan login kita juga akan menambahkan judul menggunakan <h1> yang diberi warna ungu.
+
+Setelah itu kita akan membuat navigation bar yang akan menyesuaikan dengan ukuran layar. 
+kita akan membuat 2 versi navigation bar untuk desktop dan mobile. Warna dari navigation bar ini adalah oranye dengan fitur <button> logout berwarna merah kode dari button tersebt untuk menghubungkannya dengan fungsi logout adalah :
+<a href="{% url 'main:logout' %}" class="text-center bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition duration-300">
+              Logout
+            </a>. 
+Navigation bar juga menampilkan teks nama dari website ini dan navigation bar ini juga menampilkan nama user yang sudah login menggunakan {{ user.username }}. untuk navigation bar pada mobile, kita akan menambahkan hamburger untuk membuat design lebih minimalis menggunakan queryselector button yang diikuti dengan event listener. Setelah itu kita akan membuat template card yang akan berguna sebagai template dari masing-masing produk yang ditambahkan. Card ini berwarna putih dan berisi atribut-atribut yang dimiliki produk yaitu nama, deskripsi dan Harga. Kita juga akan menambahkan tombol edit produk dan delete yang akan menuju ke tampilan fungsinya masing-masing dengan kode sebagai berikut :
+<a href="{% url 'main:edit_product' product_entry.pk %}">
+            <button class="bg-yellow-500 text-white py-1 px-3 rounded  hover:bg-yellow-600">Edit</button>
+        </a>
+        <a href="{% url 'main:delete_product' product_entry.pk %}">
+            <button class="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600">Delete</button>
+        </a>
+ Card ini juga memiliki shadow yang diberi warna kuning sebagai efek glow.
+
+Berikutnya kita akan mempercantik halaman main view. pada bagian teratas halaman main kita akan menulis judul dengan <h1> ukuran besar berupa "Welcome to WeMart by Muhammad Fadhlan Arradhi - 2306240061!" dengan tulisan berwarna ungu. Dibawahnya akan tersedia informasi mengenai nama dari akun yang sedang terlogin. kita akan membuat container dengan tag <container> sebagai pembatas yang akan menampung produk Utama yang terdapat pada context di show_main pada views.py. container ini mengandung section berwarna putih yang diisi dengan atribut-atribut pada context yang diisi dengan tag <h5> dan <p>. pada container ini juga terdapat informasi session cookie terakhir yang ditampilkan melalui tag <h5>. section pada container ini juga diberi efek shadow berwarna kuning tua. berikutnya kita akan menampilkan produk-produk yang ada menggunakan loop yang akan menampilkan semua produk berdasarkan template card yang sudah dibuat. Jika belum ada produk yang ditambahkan maka conditional akan mengarahkan program menuju kode handle yang akan memberi tulisan "Belum ada produk ditambahkan" yang disertai gambar. gambar ini disimpan pada folder static/image dengan kode <p class="text-red-600 text-3xl text-center font-bold mt-4">Belum Ada Produk Baru Ditambahkan</p>, <img src="{% static 'image/umaru.gif' %}" alt="Sad face" class="shadow-md shadow-amber-300">. jika sudah ada produk yang ditambahkan maka loop produk akan dilakukan dengan kode : 
+{% for product_entry in product_entries %}
+      {% include 'card_product.html' with product_entry=product_entry %}
+{% endfor %}
+lalu terdapat tombol untuk menambahkan produk serta logout yang terletak di bagian paling Bawah main
+
+Selanjutnya kita akan mempercantik tampilan dari tambahkan produk dan edit produk. pada kedua halaman ini, kita akan membuat section berwarna putih yang diberi efek shadow berwarna kuning. section ini akan menampung <form> yang nantinya akan berisikan field-field pada models. kita tidak perlu membuat <input> secara eksplisit karena django telah menghandle input untuk masing-masing jenis field tersebut. kita cukup mendesign button untuk menambahkan produk yang berwarna hijau. kita juga membuat tombol untuk kembali ke halaman utama bagi user yang tidak jadi menambahkan atau mengedit produk. tombol tersebut diberi link dengan kode :
+<a href="{% url 'main:show_main' %}" class="font-medium text-orange-400 hover:text-orange-500">
+        <button type="submit" class="bg-orange-400 text-white font-semibold px-6 py-3 rounded-lg hover:bg-orange-500 transition duration-300 ease-in-out w-full">
+          Kembali
+        </button>
+      </a>
+tombol-tombol ini juga kakan berubah warna ketika di hover.
 
 
 

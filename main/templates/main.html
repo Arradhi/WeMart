@@ -38,10 +38,10 @@
             <img src="{% static 'image/umaru.gif' %}" alt="Sad face" class="shadow-md shadow-amber-300">
         </div>
     {% else %}
-    <div class="grid grid-cols-1 grid-cols-2 grid-cols-3 gap-6 mt-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
       {% for product_entry in product_entries %}
-        {% include 'card_product.html' with product_entry=product_entry %}
-      {% endfor %}
+      {% include 'card_product.html' with product_entry=product_entry %}
+    {% endfor %}
   </div>
   {% endif %}
 
