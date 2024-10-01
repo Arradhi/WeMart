@@ -32,7 +32,7 @@ def show_main(request):
     return render(request, "main.html", context)
 
 def create_product_entry(request):
-    form = productForm(request.POST, request.FILES or None)
+    form = productForm(request.POST or None, request.FILES or None)
 
     if form.is_valid() and request.method == "POST":
         product_entry = form.save(commit=False)
@@ -95,7 +95,7 @@ def logout_user(request):
 
 def edit_product(request, id):
     data = Products.objects.get(pk = id)
-    form = productForm(request.POST or None, instance=data)
+    form = productForm(request.POST or None, request.FILES or None, instance=data)
     if form.is_valid() and request.method == "POST":
         form.save()
         return HttpResponseRedirect(reverse('main:show_main'))
