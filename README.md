@@ -242,8 +242,100 @@ Selanjutnya kita akan mempercantik tampilan dari tambahkan produk dan edit produ
 ```
 tombol-tombol ini juga kakan berubah warna ketika di hover.
 
+========================================================================
+
+Tugas 6 PBP
+
+1.
+manfaat dari penggunaan JavaScript dalam pengembangan aplikasi web antara lain:
+
+- JavaScript memungkinkan pengembang untuk menangani event pada halaman web, seperti klik, scroll, dan input pengguna, yang memperkaya pengalaman pengguna.
+
+- Dengan JavaScript, pengembang dapat membuat permintaan HTTP asinkron tanpa perlu memuat ulang halaman menggunakan AJAX dan Fetch API. Hal ini meningkatkan performa aplikasi dan memberikan pengalaman yang lebih halus.
+
+- JavaScript didukung di hampir semua browser modern, membuatnya menjadi pilihan yang sangat fleksibel dan serbaguna dalam pengembangan web.
 
 
+2. 
+await berungsi untuk menunggu respon hasil dari fungsi async. Jika kita tidak menggunakan fungsi await, maka kode JavaScript akan terus berjalan tanpa menunggu respons server, sehingga kita tidak dapat langsung menggunakan data yang diterima dari server.
+
+3.
+Decorator csrf_exempt digunakan pada view Django yang menerima request POST dari AJAX untuk menonaktifkan pemeriksaan CSRF (Cross-Site Request Forgery) pada request tersebut. Secara default, Django menerapkan perlindungan CSRF untuk mencegah serangan CSRF, di mana form POST memerlukan token CSRF yang valid.
+Namun, dalam konteks AJAX request, sering kali token CSRF tidak disertakan, sehingga request akan ditolak. Dengan menambahkan decorator csrf_exempt, kita memberi pengecualian pada view tersebut agar dapat menerima request POST tanpa token CSRF
+
+4.
+Pembersihan data input pengguna dilakukan di backend untuk memastikan keamanan dan integritas aplikasi. Meskipun sanitasi di frontend dapat membantu mencegah beberapa jenis serangan seperti XSS (Cross-Site Scripting) atau input tidak valid, hal tersebut tidak cukup karena:
+
+- Pengguna yang jahat bisa mem-bypass validasi frontend dengan menggunakan alat seperti cURL atau Postman untuk mengirim request langsung ke server.
+
+- Validasi dan pembersihan di backend memastikan bahwa input yang diterima oleh server adalah aman dan sesuai dengan aturan yang diharapkan, terlepas dari bagaimana data tersebut dikirim.
+
+- Backend memiliki kontrol penuh terhadap bagaimana data diproses dan disimpan, sehingga meminimalkan risiko kebocoran data atau eksploitasi.
+Karena itu, validasi dan pembersihan input dilakukan di backend sebagai lapisan keamanan tambahan, meskipun validasi di frontend tetap penting untuk pengalaman pengguna yang baik.
+
+5.
+pertama kita akan membuat fungsi untuk menambahkan produk menggunakan AJAX. fungsi  ini dimulai dengan decorator @csrf_exempt yang menonaktifkan pengecekan CSRF pada request tersebut, memastikan bahwa AJAX POST dapat dikirim tanpa memerlukan token CSRF. Selain itu, @require_POST digunakan untuk membatasi bahwa hanya request POST yang diizinkan.
+Ketika request diterima, data produk seperti nama, deskripsi, dan harga diambil dari request POST, dan pengguna yang sedang login (dari request.user) juga dicatat sebagai pemilik produk tersebut. Data ini kemudian digunakan untuk membuat objek Products, yang selanjutnya disimpan ke database menggunakan metode save(). Jika produk berhasil disimpan, view merespons dengan status 201 Created, yang menunjukkan bahwa entri produk baru berhasil dibuat.
+
+Selanjutnya kita menggunakan AJAX GET untuk mengambil data produk. Kode ini terdapat pada fungsi getProductEntries() yang mengirimkan request ke server untuk mengambil data produk dalam format JSON, dan refreshProductEntries() yang memperbarui daftar produk pada halaman dengan data yang diterima. fungsi dibawah ini bertugas untuk mengambil data produk yang hanya milik pengguna yang sedang login. Kita akan memfilter data produk berdasarkan request.user.
+
+```bash
+async function getProductEntries(){
+    return fetch("{% url 'main:show_json' %}").then((res) => res.json())
+}
+```
+
+Sementara fungsi refreshProductEntries() dibawah ini berfungsi untuk untuk mengupdate serta memberi tampilan data produk di halaman secara dinamis menggunakan hasil dari AJAX GET. Dengan ini, pengguna tidak perlu mereload halaman untuk melihat daftar produk yang mereka miliki. Jika file JSON tidak tersedia, maka fungsi ini akan memberikan tampilan dimana produk baru belum ditambahkan. Jika sudah fungsi ini akan menampilkan produk menggunakan kode card yang sudah kita definisikan sebelumnya. Akan tetapi, terdapat perubahaan pada cardnya dimana object yang ada pada model diubah menjadi item.fields. Selain itu kita juga melakukan DOMPurify untuk pembersihan data. 
+
+```bash
+async function refreshProductEntries() {
+    document.getElementById("product_entry_cards").innerHTML = "";
+    document.getElementById("product_entry_cards").className = "";
+    const ProductEntries = await getProductEntries();
+    let htmlString = "";
+    let classNameString = "";
+
+    if (ProductEntries.length === 0) {
+        classNameString = "flex flex-col items-center justify-center min-h-[24rem] p-6";
+        htmlString = `
+            <div class="flex flex-col items-center justify-center min-h-[24rem] p-6">
+                <img src="{% static 'image/umaru.gif' %}" alt="Sad face" class="w-32 h-32 mb-4"/>
+                <p class="text-center text-gray-600 mt-4">Belum ada product ditambahkan.</p>
+            </div>
+        `;
+    }
+    else {
+        classNameString = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6"
+        ProductEntries.forEach((item) => {
+          const name = DOMPurify.sanitize(item.fields.name);
+          const description = DOMPurify.sanitize(item.fields.description);
+          const price = DOMPurify.sanitize(item.fields.price);
+            htmlString += `
+            <div class="bg-white-500 shadow-md shadow-amber-300 rounded-lg p-6">
+                <img src="${item.fields.image_url}" alt="Gambar Produk" class="w-full h-48 object-contain rounded-lg mb-4 center">
+                <h2 class="text-xl font-semibold">${name}</h2>
+                <p class="text-gray-600 mt-2">${description}</p>
+                <p class="text-indigo-600 font-bold mt-2">Rp. ${price}</p>
+    
+                <div class="mt-4 flex">
+                    <a href="/edit-product/${item.pk}">
+                        <button class="bg-yellow-500 text-white py-1 px-3 rounded  hover:bg-yellow-600">Edit</button>
+                    </a>
+                    <a href="/delete-product/${item.pk}">
+                        <button class="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600">Delete</button>
+                    </a>
+                </div>
+            </div>
+            `;
+        });
+    }
+    document.getElementById("product_entry_cards").className = classNameString;
+    document.getElementById("product_entry_cards").innerHTML = htmlString;
+}
+
+```
+
+Selanjutnya kita akan
 
 
 
