@@ -275,7 +275,7 @@ Karena itu, validasi dan pembersihan input dilakukan di backend sebagai lapisan 
 
 5.
 pertama kita akan membuat fungsi untuk menambahkan produk menggunakan AJAX. fungsi  ini dimulai dengan decorator @csrf_exempt yang menonaktifkan pengecekan CSRF pada request tersebut, memastikan bahwa AJAX POST dapat dikirim tanpa memerlukan token CSRF. Selain itu, @require_POST digunakan untuk membatasi bahwa hanya request POST yang diizinkan.
-Ketika request diterima, data produk seperti nama, deskripsi, dan harga diambil dari request POST, dan pengguna yang sedang login (dari request.user) juga dicatat sebagai pemilik produk tersebut. Data ini kemudian digunakan untuk membuat objek Products, yang selanjutnya disimpan ke database menggunakan metode save(). Jika produk berhasil disimpan, view merespons dengan status 201 Created, yang menunjukkan bahwa entri produk baru berhasil dibuat.
+Ketika request diterima, data produk seperti nama, deskripsi, dan harga diambil dari request POST, dan pengguna yang sedang login (dari request.user) juga dicatat sebagai pemilik produk tersebut. Data ini kemudian digunakan untuk membuat objek Products, yang selanjutnya disimpan ke database menggunakan metode save(). Jika produk berhasil disimpan, view merespons dengan status 201 Created, yang menunjukkan bahwa entri produk baru berhasil dibuat. Tak luamjuga kita tambahkan fungsi ini kedalam urls.py
 
 Selanjutnya kita menggunakan AJAX GET untuk mengambil data produk. Kode ini terdapat pada fungsi getProductEntries() yang mengirimkan request ke server untuk mengambil data produk dalam format JSON, dan refreshProductEntries() yang memperbarui daftar produk pada halaman dengan data yang diterima. fungsi dibawah ini bertugas untuk mengambil data produk yang hanya milik pengguna yang sedang login. Kita akan memfilter data produk berdasarkan request.user.
 
@@ -335,7 +335,62 @@ async function refreshProductEntries() {
 
 ```
 
-Selanjutnya kita akan
+Selanjutnya kita menggunakan AJAX POST untuk user mengirimkan data produk mereka. Untuk menambahkan produk, kita membuat tombol yang membuka modal ketika diklik. Tombol ini memanggil fungsi showModal() yang menampilkan modal form untuk memasukkan data produk baru. Modal ini berisi form untuk mengisi nama, deskripsi, dan harga produk, yang kemudian dikirim menggunakan AJAX POST. Modal form membuat kita dapat mengisi form sesuai dengan model yang telah didefinisikan tanpa perlu berganti halaman. berikut merupakan kode dari modal form yang terdiri dari 3 bagian yaitu header, body, dan footer. Modal hanya muncul saat pengguna mengklik tombol "Tambahkan produk by AJAX". Awalnya modal tersembunyi dengan class hidden, tetapi saat pengguna mengklik tombol, modal akan terbuka. Saat pengguna mengklik tombol, fungsi JavaScript showModal() dipanggil. Fungsi ini mengubah class hidden modal menjadi visible sehingga modal form muncul di layar. Saat pengguna mengisi form dan mengklik tombol submit, data form dikirim ke server menggunakan AJAX POST tanpa reload halaman. Setelah berhasil, modal akan ditutup secara otomatis dan form dibersihkan. Modal akan ditutup menggunakan fungsi hideModal(), yang menambahkan kembali class hidden pada modal sehingga menghilang dari tampilan.
+
+```bash
+  <div id="product_entry_cards"></div>
+
+<div id="crudModal" tabindex="-1" aria-hidden="true" class="hidden fixed inset-0 z-50 w-full flex items-center justify-center bg-gray-800 bg-opacity-50 overflow-x-hidden overflow-y-auto transition-opacity duration-300 ease-out">
+  <div id="crudModalContent" class="relative bg-white rounded-lg shadow-lg w-5/6 sm:w-3/4 md:w-1/2 lg:w-1/3 mx-4 sm:mx-0 transform scale-95 opacity-0 transition-transform transition-opacity duration-300 ease-out">
+    <!-- Modal header -->
+    <div class="flex items-center justify-between p-4 border-b rounded-t">
+      <h3 class="text-xl font-semibold text-indigo-600">
+        Tambahkan Produk
+      </h3>
+      <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center" id="closeModalBtn">
+        <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+        </svg>
+        <span class="sr-only">Close modal</span>
+      </button>
+    </div>
+    <!-- Modal body -->
+    <div class="px-6 py-4 space-y-6 form-style">
+      <form id="productForm">
+        <div class="mb-4">
+          <label for="name" class="mb-2 font-semibold text-gray-700">name</label>
+          <input type="text" id="name" name="name" class="mt-1 block w-full border border-gray-300 rounded-md p-2 hover:border-orange-400" placeholder="Masukan Nama Produk" required>
+        </div>
+        <div class="mb-4">
+          <label for="description" class="mb-2 font-semibold text-gray-700">description</label>
+          <textarea id="description" name="description" rows="3" class="mt-1 block w-full h-52 resize-none border border-gray-300 rounded-md p-2 hover:border-orange-400" placeholder="Masukan Deskripsi Produk" required></textarea>
+        </div>
+        <div class="mb-4">
+          <label for="price" class="mb-2 font-semibold text-gray-700">price</label>
+          <input type="number" id="price" name="price" class="mt-1 block w-full border border-gray-300 rounded-md p-2 hover:border-orange-400" required>
+        </div>
+      </form>
+    </div>
+    <!-- Modal footer -->
+    <div class="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2 p-6 border-t border-gray-200 rounded-b justify-center md:justify-end">
+      <button type="button" class="bg-orange-400 hover:bg-orange-500 text-white font-bold py-2 px-4 rounded-lg" id="cancelButton">Kembali</button>
+      <button type="submit" id="submitProductEntry" form="productForm" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg">Save</button>
+    </div>
+  </div>
+</div>
+```
+Setelah itu kita akan membuat fungsi-fungsi yang menyokong pengiriman respon penambahan produk dari modal form. Pertama kita akan membuatfungs addPoductEntry. Fungsi ini mengirimkan data produk ke server menggunakan AJAX POST, kemudian setelah server memproses data, halaman diperbarui secara asinkron melalui refreshProductEntries() tanpa reload halaman Utama sehingga kita bisa melakukan refresh pada halaman utama secara asinkronus untuk menampilkan data terbaru. yang kemudian dikirim menggunakan AJAX POST dimana data dari form dikirim ke server menggunakan Fetch API:
+
+```bash
+function addProductEntry() {
+  fetch("{% url 'main:add_product_entry_ajax' %}", {
+    method: "POST",
+    body: new FormData(document.querySelector('#productForm')),
+  })
+  .then(response => refreshProductEntries()) 
+}
+```
+
 
 
 
